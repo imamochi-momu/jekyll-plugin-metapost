@@ -23,6 +23,8 @@ module Jekyll
       def initialize(tag_name, markup, tokens)
         # call super class method
         super
+        # parse
+        parse_args(markup)
         # set hash
         @time = Digest::MD5.hexdigest(Time.now.to_s)
 
@@ -31,8 +33,6 @@ module Jekyll
         @tex_src = "#{@time}.tex"
         @dvi_src = "#{@time}.dvi"
         @pdf_src = "#{@time}.pdf"
-        @class = ""
-        @style = ""
 
         @tex_template = <<-TEX
         \\documentclass[dvips]{jarticle}
@@ -43,6 +43,24 @@ module Jekyll
         \\includegraphics{#{@mp_dest}}
         \\end{document}
         TEX
+      end
+
+      def parse_args(markup)
+        args = markup.split(/(\w+=".*")|(\w+=.+)/).select {|s| !s.strip.empty?}
+        p args
+        args.each do |arg|
+          arg.strip!
+          if arg =~ /(\w+)="(.*)"/
+            eval("@#{$1} = \'#{$2}\'")
+            p "@1:#{$1} = #{$2}"
+            next
+          end
+          if arg =~ /(\w+)=(.+)/
+            eval("@#{$1} = \'#{$2}\'")
+            p "@2:#{$1} = #{$2}"
+            next
+          end
+        end
       end
 
       def render(context)
@@ -122,19 +140,25 @@ module Jekyll
       end
 
       def wrap_with_div(svg)
-        if @class.empty? or @class.nil?
-          @class = ""
+        if @class.nil? or @class.empty?
+          classNames = %[class="metapost"]
         else
-          @class = %[class="#{@class}"]
+          classNames = %[class="metapost #{@class}"]
         end
 
-        if @style.empty? or @style.nil?
-          @style = ""
+        if @style.nil? or @style.empty?
+          style = ""
         else
-          @style = %[style="#{@style}"]
+          style = %[style="#{@style}"]
         end
 
-        %[<div #{@class} #{@style} >#{svg}</div>]
+        if @caption.nil? or @caption.empty?
+          caption = ""
+        else
+          caption = %[<figcaption>#{@caption}</figcaption>]
+        end
+
+        %[<figure #{classNames} #{style} ><div class="metapost">#{svg}</div>#{caption}</figure>]
       end
 
     end
