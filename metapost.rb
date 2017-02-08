@@ -1,3 +1,5 @@
+# encoding: utf-8
+#
 # (The MIT License)
 # Author: Imamochi momu
 
