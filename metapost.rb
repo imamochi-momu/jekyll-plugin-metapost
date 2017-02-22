@@ -38,7 +38,7 @@ module Jekyll
 
         @tex_template = <<-TEX
         \\documentclass[dvips]{jarticle}
-        \\usepackage{graphicx}
+        \\usepackage[dvipdfmx]{graphicx}
         \\usepackage{amsmath, euler}
         \\pagestyle{empty}
         \\begin{document}
