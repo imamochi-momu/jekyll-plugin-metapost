@@ -126,7 +126,7 @@ module Jekyll
         st_file = Jekyll::StaticFile.new(site, site.source, @options[:output_dir], @filename)
         site.static_files << st_file
 
-        return "<img #{@style} src='#{File.join(@options[:output_dir], @filename)}'>"
+        return "<img #{@style} src='/#{File.join(@options[:output_dir], @filename)}'>"
       end
 
       def run_command(dot_cmd, dir)
