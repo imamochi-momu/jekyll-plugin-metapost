@@ -115,9 +115,17 @@ module Jekyll
         run_command(dot_cmd, dir)
         dot_cmd = "pdfcrop #{@pdf_src} #{@pdf_src}"
         run_command(dot_cmd, dir)
-        dot_cmd = "pdf2svg #{@pdf_src} #{File.absolute_path(output)}"
-        run_command(dot_cmd, dir)
-        puts("\n metapost output = " + output)
+        if RUBY_PLATFORM.downcase =~ /mswin(?!ce)|mingw|cygwin|bccwin/
+          dot_cmd = "gswin64 -o tmp.pdf -dNoOutputFonts -sDEVICE=pdfwrite #{@pdf_src}"
+          run_command(dot_cmd, dir)
+          dot_cmd = "pdf2svg tmp.pdf #{File.absolute_path(output)}"
+          run_command(dot_cmd, dir)
+        else
+          dot_cmd = "pdf2svg #{@pdf_src} #{File.absolute_path(output)}"
+          run_command(dot_cmd, dir)
+        end
+
+       puts("\n metapost output = " + output)
       end
 
       def generate_img_tag(context)
